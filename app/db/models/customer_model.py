@@ -14,12 +14,8 @@ class Customer(Base):
     NIK = Column(String(20), unique=True)
     phone_number = Column(String(20))
     email = Column(String(100))
-    PIN = Column(Integer)
     created_at = Column(TIMESTAMP, server_default=func.current_timestamp())
     updated_at = Column(TIMESTAMP, server_default=func.current_timestamp(), onupdate=func.current_timestamp())
-
-    # Relationships
-    login = relationship("Login", back_populates="customer", uselist=False)
 
     # Hubungan ke PortofolioAccount
     portofolio = relationship(
