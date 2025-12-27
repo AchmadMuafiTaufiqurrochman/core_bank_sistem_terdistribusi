@@ -5,13 +5,13 @@ from app.db.models.transaction_model import Transaction, TransactionType, Transa
 from app.db.models.mutation_model import Mutation, MutationType
 from app.db.models.portofolio_model import PortofolioAccount
 from app.schemas.overbook_mutation_schema import OverbookMutationRequest
-from app.repositories.overbook_repository import OverbookRepository
+from app.repositories.mutation_repository import MutationRepository
 from datetime import datetime
 import time
 from decimal import Decimal
 
 async def post_overbook_transaction_service(db: AsyncSession, request: OverbookMutationRequest):
-    repository = OverbookRepository(db)
+    repository = MutationRepository(db)
 
     # Validate Source Account
     source_account = await repository.get_account_by_number(request.source_account_number)

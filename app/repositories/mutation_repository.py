@@ -4,7 +4,7 @@ from app.db.models.portofolio_model import PortofolioAccount
 from app.db.models.transaction_model import Transaction
 from app.db.models.mutation_model import Mutation
 
-class OverbookRepository:
+class MutationRepository:
     def __init__(self, db: AsyncSession):
         self.db = db
 
