@@ -1,5 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
+from sqlalchemy import update
 from app.db.models.portofolio_model import PortofolioAccount
 from app.db.models.transaction_model import Transaction
 from app.db.models.mutation_model import Mutation
@@ -17,6 +18,13 @@ class MutationRepository:
 
     def add_mutation(self, mutation: Mutation):
         self.db.add(mutation)
+
+    async def update_balance(self, account_number: str, new_balance):
+        await self.db.execute(
+            update(PortofolioAccount)
+            .where(PortofolioAccount.account_number == account_number)
+            .values(balance=new_balance)
+        )
 
     async def commit(self):
         await self.db.commit()

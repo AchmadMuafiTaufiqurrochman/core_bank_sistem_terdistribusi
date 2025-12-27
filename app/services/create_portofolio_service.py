@@ -45,7 +45,6 @@ async def create_portofolio_service(db: AsyncSession, data: RegisterRequest):
         
         return {
             "message": "Portofolio created successfully",
-            "customer_id": cid,
             "account_number": acc_num
         }
         

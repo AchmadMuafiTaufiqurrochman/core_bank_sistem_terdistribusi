@@ -10,6 +10,7 @@ from app.db.database import Base
 class MutationType(enum.Enum):
     Debit = "Debit"
     Kredit = "Kredit"
+    Refersal = "Refersal"
 
 
 class Mutation(Base):
