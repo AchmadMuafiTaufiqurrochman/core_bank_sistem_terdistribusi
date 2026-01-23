@@ -40,13 +40,18 @@ async def get_list_mutation_service(db: AsyncSession, request: ListMutation):
         # Determine related account based on mutation type
         related_account_number = None
         description = None
-        
+
         if mutation.transaction:
             description = mutation.transaction.description
             if mutation.mutation_type.value == "Debit":
                 related_account_number = mutation.transaction.target_account_number
             elif mutation.mutation_type.value == "Kredit":
                 related_account_number = mutation.transaction.source_account_number
+        
+        # Jika transaksi tidak ada (misalnya SetorTunai/TarikTunai), tetap ambil data mutasi
+        # Gunakan tipe mutasi sebagai deskripsi default jika deskripsi kosong
+        if description is None:
+            description = mutation.mutation_type.value
 
         mutation_list.append({
             "transaction_id": mutation.transaction_id,

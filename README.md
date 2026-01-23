@@ -99,6 +99,7 @@ Anda juga dapat menjalankan aplikasi menggunakan Docker untuk lingkungan yang te
 2.  **Running**
     Jalankan perintah berikut di terminal:
     ```bash
+    docker network create minibank-network
     docker compose up -d --build
     ```
     Perintah ini akan membangun image, menjalankan container database dan aplikasi, serta melakukan migrasi database secara otomatis.
