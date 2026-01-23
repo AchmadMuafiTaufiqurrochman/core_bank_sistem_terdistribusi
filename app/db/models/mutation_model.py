@@ -11,6 +11,8 @@ class MutationType(enum.Enum):
     Debit = "Debit"
     Kredit = "Kredit"
     Refersal = "Refersal"
+    SetorTunai = "SetorTunai"
+    TarikTunai = "TarikTunai"
 
 
 class Mutation(Base):

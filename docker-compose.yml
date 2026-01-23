@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  # 1. Ganti nama service DB agar unik (misal: db-core)
+  db-core:
+    image: mysql:8.0
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    ports:
+      # Mapping port Host (3304) -> Container (3306)
+      - "${DB_PORT_EXTERNAL:-3304}:3306"
+    volumes:
+      # 2. PENTING: Gunakan nama volume yang berbeda!
+      - db_core_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # 3. Service App Core
+  app-core:
+    build:
+      context: .
+      args:
+        APP_PORT: ${APP_PORT:-8002}
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      # Arahkan ke db-core
+      DB_HOST: ${DB_HOST:-db-core}
+      DB_PORT: ${DB_PORT:-3306}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+    ports:
+      # Mapping port Host (8002) -> Container (8002)
+      - "${APP_PORT:-8002}:${APP_PORT:-8002}"
+    depends_on:
+      db-core:
+        condition: service_healthy
+    volumes:
+      - .:/app:cached
+    command: /app/scripts/docker-entrypoint.sh
+    networks:
+      - default
+      - minibank-network  # Gabung ke network yang sama dengan Services
+
+# 4. Definisi Volume unik
+volumes:
+  db_core_data:
+
+# 5. Gunakan network external yang sama
+networks:
+  minibank-network:
+    external: true

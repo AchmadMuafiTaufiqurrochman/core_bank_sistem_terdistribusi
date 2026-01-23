@@ -1,6 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy import update
+from sqlalchemy.orm import selectinload
 from app.db.models.portofolio_model import PortofolioAccount
 from app.db.models.transaction_model import Transaction
 from app.db.models.mutation_model import Mutation
@@ -34,3 +35,16 @@ class MutationRepository:
     
     async def refresh(self, instance):
         await self.db.refresh(instance)
+
+    async def get_mutations_by_account_and_date_range(self, account_number: str, start_date, end_date):
+        result = await self.db.execute(
+            select(Mutation)
+            .options(selectinload(Mutation.transaction))
+            .where(
+                Mutation.account_number == account_number,
+                Mutation.created_at >= start_date,
+                Mutation.created_at <= end_date
+            )
+            .order_by(Mutation.created_at.desc())
+        )
+        return result.scalars().all()

@@ -19,7 +19,7 @@ async def deposit_service(db: AsyncSession, request: DepositRequest):
     mutation = Mutation(
         account_number=account.account_number,
         transaction_id=None,
-        mutation_type=MutationType.Debit,
+        mutation_type=MutationType.SetorTunai,
         amount=request.amount,
         balance_after=account.balance
     )

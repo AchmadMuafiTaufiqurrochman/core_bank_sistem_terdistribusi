@@ -4,8 +4,10 @@ from app.core.deps import verify_api_key
 from app.db.database import get_db
 from app.services.create_portofolio_service import create_portofolio_service
 from app.services.deposit_service import deposit_service
+from app.services.withdraw_service import withdraw_service
 from app.schemas.create_porto_schema import RegisterRequest
-from app.schemas.deposit_schema import DepositRequest
+from app.schemas.deposit_schema import DepositRequest, DepositResponse
+from app.schemas.withdraw_schema import WithdrawRequest
 
 router = APIRouter(prefix="/portofolio", tags=["Portofolio"])
 
@@ -13,6 +15,10 @@ router = APIRouter(prefix="/portofolio", tags=["Portofolio"])
 async def create_portofolio(request: RegisterRequest, db: AsyncSession = Depends(get_db)):
     return await create_portofolio_service(db, request)
 
-@router.post("/balance/deposit", dependencies=[Depends(verify_api_key)])
+@router.post("/balance/deposit", dependencies=[Depends(verify_api_key)], response_model=DepositResponse)
 async def add_balance(request: DepositRequest, db: AsyncSession = Depends(get_db)):
     return await deposit_service(db, request)
+
+@router.post("/balance/withdraw", dependencies=[Depends(verify_api_key)])
+async def withdraw_balance(request: WithdrawRequest, db: AsyncSession = Depends(get_db)):
+    return await withdraw_service(db, request)

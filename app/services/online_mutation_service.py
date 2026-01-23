@@ -76,15 +76,6 @@ async def post_online_transaction_service(db: AsyncSession, request: OnlineMutat
     except Exception as e:
         logger.error(f"Middleware error: {e}")
         
-        # 7. Reversal (Compensating Transaction)
-        # If middleware fails, we must credit the amount back.
-        
-        # Re-acquire lock or just update (since we are in the same session context, 
-        # but we committed, so objects might be detached or expired. 
-        # Ideally, we should fetch again or ensure the session is active.)
-        
-        # Since we committed, the transaction is closed. We need to start a new one implicitly by adding operations.
-        # However, 'source_account' might need refreshing.
         await repository.refresh(source_account)
         
         new_balance = source_account.balance + amount_decimal
@@ -93,7 +84,7 @@ async def post_online_transaction_service(db: AsyncSession, request: OnlineMutat
         reversal_mutation = Mutation(
             account_number=request.source_account_number,
             transaction_id=request.transaction_id,
-            mutation_type=MutationType.Kredit, # Credit back
+            mutation_type=MutationType.Kredit,
             amount=amount_decimal,
             balance_after=new_balance
         )
